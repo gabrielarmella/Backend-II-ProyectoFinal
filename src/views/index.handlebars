@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos</title>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+  {{#if user}}
+    <h1>Bienvenido, {{user.first_name}} {{user.last_name}}!</h1>
+    <p>Rol: {{user.role}}</p>
+  {{/if}}
+  <div class="products-box">
+    {{#each products}}
+      <div class="product-card">
+        <h3>{{this.title}}</h3>
+        <hr>
+        <p>Categoria: {{this.category}}</p>
+        <p>Descripción: {{this.description}}</p>
+        <p>Precio: $ {{this.price}}</p>
+        <button id="button-delete" onclick="deleteProduct('{{this._id}}')">Eliminar</button>
+      </div>
+    {{/each}}
+  </div>
+  <script src="/js/index.js"></script>
+</body>
+</html>
