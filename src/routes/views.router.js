@@ -1,12 +1,49 @@
 import { Router } from 'express';
+import passport from 'passport';
 import { productDBManager } from '../dao/productDBManager.js';
 import { cartDBManager } from '../dao/cartDBManager.js';
 
-const router = Router();
+const  viewsRouter = Router();
 const ProductService = new productDBManager();
 const CartService = new cartDBManager(ProductService);
 
-router.get('/products', async (req, res) => {
+viewsRouter.get("/", (req, res) => {
+    const isSession = req.session && req.session.user ? true : false;
+    res.render("index", {
+      title: "Inicio",
+      isSession,
+      user: req.session ? req.session.user : null
+    });
+  });
+  
+  viewsRouter.get("/login", (req, res) => {
+    const isSession = req.session && req.session.user ? true : false;
+  
+    if (isSession) {
+      return res.redirect("/");
+    }
+  
+    res.render("login", { title: "Login" });
+  });
+  
+  viewsRouter.get("/register", (req, res) => {
+    const isSession = req.session && req.session.user ? true : false;
+  
+    if (isSession) {
+      return res.redirect("/");
+    }
+  
+    res.render("register", { title: "Register" });
+  });
+  
+  viewsRouter.get('/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    res.render('profile', { title: 'Profile', user: req.user });
+  });
+
+viewsRouter.get('/products', async (req, res) => {
     const products = await ProductService.getAllProducts(req.query);
 
     res.render(
@@ -27,7 +64,7 @@ router.get('/products', async (req, res) => {
     )
 });
 
-router.get('/realtimeproducts', async (req, res) => {
+viewsRouter.get('/realtimeproducts', async (req, res) => {
     const products = await ProductService.getAllProducts(req.query);
     res.render(
         'realTimeProducts',
@@ -39,7 +76,7 @@ router.get('/realtimeproducts', async (req, res) => {
     )
 });
 
-router.get('/cart/:cid', async (req, res) => {
+viewsRouter.get('/cart/:cid', async (req, res) => {
     const response = await CartService.getProductsFromCartByID(req.params.cid);
 
     if (response.status === 'error') {
@@ -62,4 +99,4 @@ router.get('/cart/:cid', async (req, res) => {
     )
 });
 
-export default router;
+export default viewsRouter;

@@ -14,7 +14,7 @@ import websocket from './websocket.js';
 
 import  {authRouter}  from "./routes/auth.routes.js";
 import  {userRouter}  from "./routes/user.routes.js";
-import sessionsRouter from "./routes/sessions.routes.js";
+import sessionsRoutes from "./routes/sessions.routes.js";
 import { initializePassport } from "./config/passport.config.js";
 
 dotenv.config();
@@ -46,7 +46,7 @@ app.use("/api/carts", cartRouter);
 app.use("/", viewsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", passport.authenticate("jwt", { session: false }),userRouter);
-app.use("/api/sessions", sessionsRouter);
+app.use("/api/sessions", sessionsRoutes);
 
 const PORT = 8080; 
 

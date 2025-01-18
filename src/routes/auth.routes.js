@@ -30,7 +30,12 @@ authRouter.post(
 authRouter.get(
   "/jwt",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.json(req.user);
+  async (req, res) => {
+    try {
+      const user = await userModel.findById(req.user.id);
+      res.json(user);
+    } catch (error) {
+      res.status(400).json({ status: "error", message: error.message });
+    }
   }
 );

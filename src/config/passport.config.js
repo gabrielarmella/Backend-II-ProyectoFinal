@@ -71,27 +71,24 @@ export function initializePassport() {
     )
   );
 
-  passport.use(
-    "jwt",
-    new JWTStrategy(
-      {
-        secretOrKey: SECRET,
-        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-      },
-      async (payload, done) => {
-        try {
-          const user = await userModel.findById(payload.id);
+  const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: SECRET,
+  };
 
-          if (!user) return done(null, false);
-
-          return done(null, user);
-        } catch (error) {
-          return done(error);
-        }
+  passport.use(new JWTStrategy(opts, async (jwt_payload, done) => {
+    try {
+      const user = await userModel.findById(jwt_payload.id);
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
       }
-    )
-  );
-  
+    } catch (err) {
+      return done(err, false);
+    }
+  }));
+
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
