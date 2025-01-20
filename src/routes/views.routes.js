@@ -99,4 +99,8 @@ viewsRouter.get('/cart/:cid', async (req, res) => {
     )
 });
 
+viewsRouter.get("/create-product", (req, res) => {
+  res.render("createProduct", { title: "Crear Producto" });
+});
+
 export default viewsRouter;
