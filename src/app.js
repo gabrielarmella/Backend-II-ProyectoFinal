@@ -1,21 +1,16 @@
 import express from "express";
 import handlebars from 'express-handlebars';
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 import mongoose from "mongoose";
-import passport from "passport";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
-import productRouter from './routes/product.router.js';
-import cartRouter from './routes/cart.router.js';
-import viewsRouter from './routes/views.router.js';
+import productRouter from './routes/product.routes.js';
+import cartRouter from './routes/cart.routes.js';
+import viewsRouter from './routes/views.routes.js';
+import { customAuthRouter } from './routes/customAuth.routes.js'; 
 import __dirname from './utils/constantsUtil.js';
-import websocket from './websocket.js';
-
-import  {authRouter}  from "./routes/auth.routes.js";
-import  {userRouter}  from "./routes/user.routes.js";
-import sessionsRoutes from "./routes/sessions.routes.js";
-import { initializePassport } from "./config/passport.config.js";
+/* import websocket from './websocket.js'; */
 
 dotenv.config();
 const app = express();
@@ -23,8 +18,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser("mysecret"));
-initializePassport();
-app.use(passport.initialize());
 
 app.use(express.static(__dirname + '/../public'));
 
@@ -44,16 +37,14 @@ app.set('view engine', 'handlebars');
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/", viewsRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/users", passport.authenticate("jwt", { session: false }),userRouter);
-app.use("/api/sessions", sessionsRoutes);
+app.use('/api/auth', customAuthRouter);
+/* app.use("/api/users", passport.authenticate("jwt", { session: false }), userRouter); */
+/* app.use("/api/sessions", sessionsRoutes); */
 
-const PORT = 8080; 
 
+const PORT = process.env.PORT || 8080;
 const httpServer = app.listen(PORT, () => {
   console.log(`Start server in PORT http://localhost:${PORT}`);
 });
 
 const io = new Server(httpServer);
-
-websocket(io);
