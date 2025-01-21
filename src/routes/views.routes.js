@@ -7,6 +7,20 @@ const  viewsRouter = Router();
 const ProductService = new productDBManager();
 const CartService = new cartDBManager(ProductService);
 
+function isAuthenticated(req, res, next) {
+  if (req.signedCookies.currentUser) {
+    return next();
+  }
+  res.redirect("/login");
+}
+
+function isNotAuthenticated(req, res, next) {
+  if (!req.signedCookies.currentUser) {
+    return next();
+  }
+  res.redirect("/products");
+}
+
 viewsRouter.get("/", (req, res) => {
     const isSession = req.session && req.session.user ? true : false;
     res.render("index", {
@@ -16,7 +30,7 @@ viewsRouter.get("/", (req, res) => {
     });
   });
   
-  viewsRouter.get("/login", (req, res) => {
+  viewsRouter.get("/login", isNotAuthenticated, (req, res) => {
     const isSession = req.session && req.session.user ? true : false;
   
     if (isSession) {
@@ -26,7 +40,7 @@ viewsRouter.get("/", (req, res) => {
     res.render("login", { title: "Login" });
   });
   
-  viewsRouter.get("/register", (req, res) => {
+  viewsRouter.get("/register", isNotAuthenticated, (req, res) => {
     const isSession = req.session && req.session.user ? true : false;
   
     if (isSession) {
@@ -101,6 +115,17 @@ viewsRouter.get('/cart/:cid', async (req, res) => {
 
 viewsRouter.get("/create-product", (req, res) => {
   res.render("createProduct", { title: "Crear Producto" });
+});
+
+viewsRouter.get("/current", isAuthenticated, async (req, res) => {
+  try {
+    const token = req.signedCookies.currentUser;
+    const decoded = jwt.verify(token, SECRET);
+    const user = await userModel.findById(decoded.id);
+    res.render("current", { user });
+  } catch (error) {
+    res.status(400).json({ status: "error", message: error.message });
+  }
 });
 
 export default viewsRouter;

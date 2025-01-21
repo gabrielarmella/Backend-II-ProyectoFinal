@@ -13,7 +13,7 @@ authRouter.post(
 
 authRouter.post(
   "/login",
-  passport.authenticate("login", { session: false }),
+  passport.authenticate("login", { session: false, failureRedirect: "/login?error=true" }),
   (req, res) => {
     const { user, token } = req.user;
 
@@ -23,7 +23,7 @@ authRouter.post(
       maxAge: 1000 * 60 * 60,
     });
 
-    res.json({ token, user });
+    res.redirect("/products");
   }
 );
 

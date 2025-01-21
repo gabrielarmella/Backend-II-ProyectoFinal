@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Current User</title>
+   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-  <h1>Current User</h1>
-  <p>First Name: {{user.first_name}}</p>
-  <p>Last Name: {{user.last_name}}</p>
-  <p>Email: {{user.email}}</p>
-  <p>Age: {{user.age}}</p>
-  <p>Role: {{user.role}}</p>
+ <div class="container">
+    <h1>Datos del Usuario</h1>
+    <p>Nombre: {{user.first_name}}</p>
+    <p>Apellido: {{user.last_name}}</p>
+    <p>Email: {{user.email}}</p>
+    <p>Edad: {{user.age}}</p>
+    <p>Rol: {{user.role}}</p>
+  </div>
 </body>
 </html>

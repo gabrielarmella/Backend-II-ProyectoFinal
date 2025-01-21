@@ -34,14 +34,15 @@ h3 {
 }
 
 .container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
 
 .auth-buttons {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
 }
 
@@ -63,6 +64,7 @@ h3 {
 .auth-forms {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
 }
 

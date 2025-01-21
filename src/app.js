@@ -5,11 +5,14 @@ import { Server } from 'socket.io';
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import passport from "passport";
 
 import productRouter from './routes/product.router.js';
 import cartRouter from './routes/cart.router.js';
 import viewsRouter from './routes/views.routes.js';
-import { customAuthRouter } from './routes/customAuth.routes.js'; 
+import { authRouter } from "./routes/auth.routes.js";
+import { initializePassport } from "./config/passport.config.js";
+/* import { customAuthRouter } from './routes/customAuth.routes.js';  */
 import __dirname from './utils/constantsUtil.js';
 import websocket from './websocket.js';
 
@@ -39,11 +42,15 @@ app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/../views');
 app.set('view engine', 'handlebars');
 
+initializePassport();
+app.use(passport.initialize());
+
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use('/products', productRouter);
 app.use("/", viewsRouter);
-app.use('/api/auth', customAuthRouter);
+app.use('/api/auth', authRouter);
+/* app.use('/api/auth', customAuthRouter); */
 /* app.use("/api/users", passport.authenticate("jwt", { session: false }), userRouter); */
 /* app.use("/api/sessions", sessionsRoutes); */
 
