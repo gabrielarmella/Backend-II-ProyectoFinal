@@ -1,13 +1,28 @@
 import { Router } from "express";
 import passport from "passport";
+import { userModel } from "../models/user.model.js";
 
 export const authRouter = Router();
 
 authRouter.post(
   "/register",
+  async (req, res, next) => {
+    try {
+      const { email } = req.body;
+      const existingUser = await userModel.findOne({ email });
+
+      if (existingUser) {
+        return res.status(400).json({ message: "El correo electrónico ya está registrado" });
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  },
   passport.authenticate("register", { session: false }),
   (req, res) => {
-    res.json(req.user);
+    res.redirect("/login"); 
   }
 );
 

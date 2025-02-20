@@ -18,7 +18,7 @@ function isNotAuthenticated(req, res, next) {
   if (!req.signedCookies.currentUser) {
     return next();
   }
-  res.redirect("/products");
+  res.redirect("/register");
 }
 
 viewsRouter.get("/", (req, res) => {
@@ -58,25 +58,19 @@ viewsRouter.get("/", (req, res) => {
   });
 
 viewsRouter.get('/products', async (req, res) => {
+  try{
     const products = await ProductService.getAllProducts(req.query);
-
     res.render(
-        'index',
-        {
-            title: 'Productos',
-            style: 'index.css',
-            products: JSON.parse(JSON.stringify(products.docs)),
-            prevLink: {
-                exist: products.prevLink ? true : false,
-                link: products.prevLink
-            },
-            nextLink: {
-                exist: products.nextLink ? true : false,
-                link: products.nextLink
-            }
-        }
-    )
+      'products',
+      {
+        title: 'Productos',
+        products: products.docs,
+      });
+    } catch (error) {
+      res.status(400).json({ status: 'error', message: error.message });
+    }
 });
+
 
 viewsRouter.get('/realtimeproducts', async (req, res) => {
     const products = await ProductService.getAllProducts(req.query);
@@ -98,7 +92,7 @@ viewsRouter.get('/cart/:cid', async (req, res) => {
             'notFound',
             {
                 title: 'Not Found',
-                style: 'index.css'
+                style: 'main.css'
             }
         );
     }
@@ -107,7 +101,7 @@ viewsRouter.get('/cart/:cid', async (req, res) => {
         'cart',
         {
             title: 'Carrito',
-            style: 'index.css',
+            style: 'main.css',
             products: JSON.parse(JSON.stringify(response.products))
         }
     )

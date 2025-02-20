@@ -4,6 +4,7 @@
     <div class="products-box">
         {{#each products}}
             <div class="product-card">
+                <img src="{{this.product.image}}" alt="{{this.title}}">
                 <h3>{{this.product.title}}</h3>
                 <hr>
                 <p>Categoria: {{this.product.category}}</p>

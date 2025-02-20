@@ -6,13 +6,19 @@ const router = Router();
 const ProductService = new productDBManager();
 
 router.get('/', async (req, res) => {
-    const result = await ProductService.getAllProducts(req.query);
-
-    res.send({
-        status: 'success',
-        payload: result
-    });
-});
+    try {
+      const products = await ProductService.getAllProducts(req.query);
+      res.render('products', {
+        title: 'Productos',
+        products: products.docs
+      });
+    } catch (error) {
+      res.status(400).send({
+        status: 'error',
+        message: error.message
+      });
+    }
+  });
 
 router.get('/:pid', async (req, res) => {
     try {
@@ -33,7 +39,7 @@ router.post('/', uploader.array('thumbnails', 3), async (req, res) => {
   if (req.files) {
     req.body.thumbnails = [];
     req.files.forEach((file) => {
-      req.body.thumbnails.push(file.path);
+        req.body.thumbnails.push(`/imagenes/${file.filename}`);
     });
   }
 
@@ -55,7 +61,7 @@ router.put('/:pid', uploader.array('thumbnails', 3), async (req, res) => {
     if (req.files) {
         req.body.thumbnails = [];
         req.files.forEach((file) => {
-            req.body.thumbnails.push(file.filename);
+            req.body.thumbnails.push(`/imagenes/${file.filename}`);
         });
     }
 

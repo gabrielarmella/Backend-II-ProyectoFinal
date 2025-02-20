@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userModel } from "../dao/models/user.model.js";
+import { userModel } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { SECRET } from "../utils/jwt.utils.js";
@@ -12,15 +12,7 @@ function isAuthenticated(req, res, next) {
     return next();
   }
   res.status(401).json({ status: "error", message: "Unauthorized" });
-  /* res.redirect("/login"); */
-}
-
-// Middleware para verificar si el usuario no está autenticado
-function isNotAuthenticated(req, res, next) {
-  if (!req.signedCookies.currentUser) {
-    return next();
-  }
-  res.redirect("/products");
+  res.redirect("/login");
 }
 
 // Ruta para obtener todos los usuarios
@@ -79,7 +71,7 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 
 
 // Ruta para obtener los datos del usuario actual
-router.get("/current", isAuthenticated, async (req, res) => {
+router.get("/api/users/current", isAuthenticated, async (req, res) => {
   try {
     const token = req.signedCookies.currentUser;
     const decoded = jwt.verify(token, SECRET);
@@ -89,10 +81,5 @@ router.get("/current", isAuthenticated, async (req, res) => {
     res.status(400).json({ status: "error", message: error.message });
   }
 });
-
-/* // Ruta para el formulario de login
-router.get("/login", isNotAuthenticated, (req, res) => {
-  res.render("login");
-}); */
 
 export { router as userRouter };

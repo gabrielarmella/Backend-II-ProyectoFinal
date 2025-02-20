@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { createToken, SECRET } from "../utils/jwt.utils.js";
-import { userModel } from "../dao/models/user.model.js";
+import { userModel } from "../models/user.model.js";
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
 
 export function initializePassport() {
@@ -21,7 +21,7 @@ export function initializePassport() {
             return done(null, false, { message: "Campos incompletos" });
           }
 
-          const hashedPassword = hashPassword(password);
+          const hashedPassword = await hashPassword(password);
 
           const user = await userModel.create({
             first_name,
@@ -84,8 +84,8 @@ export function initializePassport() {
       } else {
         return done(null, false);
       }
-    } catch (err) {
-      return done(err, false);
+    } catch (error) {
+      return done(error, false);
     }
   }));
 

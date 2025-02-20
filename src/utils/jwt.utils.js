@@ -1,13 +1,20 @@
 import jwt from "jsonwebtoken";
+import {CONFIG} from "../config/config.js";
 
-export const SECRET = "mysecret";
+
+export const SECRET = CONFIG.JWT.SECRET;
 
 export function createToken(payload) {
   return jwt.sign(payload, SECRET, {
-    expiresIn: "10m",
+    EXPIRES_IN: CONFIG.JWT.EXPIRES_IN,
   });
 }
 
 export function verifyToken(token) {
-  return jwt.verify(token, SECRET);
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    return decoded;
+  } catch (error) {
+    throw new Error(`Invalid token: ${error}`);
+  }
 }

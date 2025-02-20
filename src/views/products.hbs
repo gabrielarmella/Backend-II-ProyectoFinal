@@ -1,0 +1,39 @@
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">Coder Steam</h1>
+      <nav class="nav">
+        <ul>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/products">Productos</a></li>
+          <li><a href="/about">Acerca de</a></li>
+          <li><a href="/contact">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="main-content">
+    <div class="container">
+      <h1>Lista de Productos</h1>
+      <div class="products-box">
+        {{#each products}}
+          <div class="product-card">
+            <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}" class="product-image">
+            <h3>{{this.title}}</h3>
+            <p>Descripción: {{this.description}}</p>
+            <p>Precio: ${{this.price}}</p>
+            <p>Categoría: {{this.category}}</p>
+            <p>Stock: {{this.stock}}</p>
+            <button class="btn-buy">Comprar</button>
+          </div>
+        {{/each}}
+      </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Coder Steam. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
+</body>

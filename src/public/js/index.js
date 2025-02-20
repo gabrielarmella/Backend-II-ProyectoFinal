@@ -15,6 +15,8 @@ socket.on('publishProducts', data => {
     let html = '';
     data.forEach(product => {
         html += `<div class="product-card">
+                    <img src=${product.thumbnails} alt=${product.tittle}>
+                    <hr>
                     <h3>${product.title}</h3>
                     <hr>
                     <p>Categoria: ${product.category}</p>
@@ -35,7 +37,8 @@ function createProduct(event) {
         code: $('#code').value,
         price: $('#price').value,
         stock: $('#stock').value,
-        category: $('#category').value
+        category: $('#category').value,
+        thumbnails: $('#thumbnails').value
     }
 
     cleanForm();
