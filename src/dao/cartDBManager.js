@@ -1,4 +1,4 @@
-import { cartModel } from '../models/cart.model.js';
+import { cartModel } from '../models/mongodb/cart.model.js';
 
 class cartDBManager {
 
@@ -7,7 +7,8 @@ class cartDBManager {
     }
 
     async getAllCarts() {
-        return cartModel.find();
+        const carts = await cartModel.find();
+        return carts.map(cart => new CartDTO(cart));
     }
 
     async getProductsFromCartByID(cid) {
@@ -15,11 +16,12 @@ class cartDBManager {
 
         if (!cart) throw new Error(`El carrito ${cid} no existe!`);
         
-        return cart;
+        return new CartDTO(cart);
     }
 
     async createCart() {
         return await cartModel.create({products: []});
+        return new CartDTO(newCart);
     }
 
     async addProductByID(cid, pid) {
@@ -67,7 +69,6 @@ class cartDBManager {
 
     async updateAllProducts(cid, products) {
 
-        //Validate if exist products
         for (let key in products) {
             await this.productDBManager.getProductByID(products[key].product);
         }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil de Usuario</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo-link"><h1 class="logo">Coder Steam</h1></a>
+      <nav class="nav">
+        <ul>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/products">Productos</a></li>
+          <li><a href="/about">Acerca de</a></li>
+          <li><a href="/contact">Contacto</a></li>
+          <li><a href="/profile"><i class="fas fa-user"></i> Perfil</a></li>
+          <li><a href="/cart"><i class="fas fa-shopping-cart"></i> Carrito</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="main-content">
+    <div class="container">
+      <h1>Perfil de Usuario</h1>
+      <p>Nombre: {{user.first_name}}</p>
+      <p>Apellido: {{user.last_name}}</p>
+      <p>Email: {{user.email}}</p>
+      <p>Edad: {{user.age}}</p>
+      <p>Rol: {{user.role}}</p>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Coder Steam. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+    <script src="/js/index.js"></script>
+</body>
+</html>

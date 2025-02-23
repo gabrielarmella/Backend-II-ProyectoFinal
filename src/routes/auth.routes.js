@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
-import { userModel } from "../models/user.model.js";
+import { userModel } from "../models/mongodb/user.model.js";
 
 export const authRouter = Router();
 

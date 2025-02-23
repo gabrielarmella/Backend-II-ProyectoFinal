@@ -56,19 +56,86 @@ body {
     width: 80%;
     margin: 0 auto;
   }
+
+  .product-detail {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+  }
   
+  .product-images {
+    flex: 1;
+  }
+
+  .main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .thumbnail-images {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .thumbnail-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .thumbnail-image:hover {
+    transform: scale(1.1);
+  }
+  
+  .product-info {
+    flex: 1;
+    background-color: #2a475e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 10%;
+  }
+  
+  .product-info h1 {
+    font-size: 24px;
+    color: #66c0f4;
+  }
+  
+  .product-info p {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  
+  .product-price {
+    font-size: 20px;
+    color: #66c0f4;
+  }
+
   .products-box {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
   }
+
+  .product-card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  
   
   .product-card {
     background-color: #2a475e;
     padding: 20px;
     border-radius: 8px;
-    width: calc(33.333% - 20px);
+    width: 25rem;
+    min-height: 34.375rem;
     box-sizing: border-box;
     text-align: center;
     transition: transform 0.3s ease;
@@ -77,6 +144,13 @@ body {
   .product-card:hover {
     transform: scale(1.05);
   }
+
+  .product-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+  }
+  
   
   .product-card img {
     max-width: 100%;
@@ -94,22 +168,21 @@ body {
     margin-bottom: 10px;
   }
   
-  .btn-buy {
+  .btn-cart, .btn-buy {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
     background-color: #66c0f4;
+    color: #fff;
     border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin-top: 10px;
-    cursor: pointer;
     border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
     transition: background-color 0.3s ease;
   }
   
-  .btn-buy:hover {
+  .btn-cart:hover, .btn-buy:hover {
     background-color: #549bbd;
   }
   
@@ -170,7 +243,7 @@ body {
     transition: background-color 0.3s ease;
   }
   
-  .btn:hover {
+  .btn-cart:hover, .btn:hover {
     background-color: #549bbd;
   }
   

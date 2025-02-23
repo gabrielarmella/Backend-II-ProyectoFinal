@@ -58,3 +58,37 @@ function cleanForm() {
     $('#stock').value = '';
     $('#category').value = '';
 }
+
+function changeMainImage(src) {
+    document.getElementById('mainImage').src = src;
+  }
+
+
+function removeFromCart(productId){
+    fetch(`/api/carts/remove-product/${productId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success'){
+            location.reload();
+        }else{
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            setTimeout(function() {
+                window.location.href = '/products';
+            }, 1000);
+        });
+    }

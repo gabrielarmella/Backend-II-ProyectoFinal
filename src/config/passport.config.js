@@ -2,8 +2,9 @@ import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { createToken, SECRET } from "../utils/jwt.utils.js";
-import { userModel } from "../models/user.model.js";
+import {userService} from '../services/index.service.js';
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
+import {CONFIG} from '../config/config.js';
 
 export function initializePassport() {
   passport.use(
@@ -20,7 +21,6 @@ export function initializePassport() {
           if (!first_name || !last_name || !age) {
             return done(null, false, { message: "Campos incompletos" });
           }
-
           const hashedPassword = await hashPassword(password);
 
           const user = await userModel.create({
@@ -48,22 +48,17 @@ export function initializePassport() {
       },
       async (email, password, done) => {
         try {
-          const user = await userModel.findOne({ email });
-
-          if (!user) return done(null, false, { message: "Usuario no encontrado" });
-
-          const isValidPassword = await comparePassword(password, user.password);
-
+          const userDTO = await userService.getUserByEmail(email);
+          if (!userDTO) return done(null, false, { message: "Usuario no encontrado" });
+          const isValidPassword = await comparePassword(password, userDTO.password);
           if (!isValidPassword)
             return done(null, false, { message: "Contraseña incorrecta" });
-
           const token = createToken({
-            id: user.id,
-            email: user.email,
-            role: user.role,
+            id: userDTO.id,
+            email: userDTO.email,
+            role: userDTO.role,
           });
-
-          return done(null, { user, token });
+          return done(null, { user: userDTO, token });
         } catch (error) {
           return done(error);
         }
@@ -78,9 +73,9 @@ export function initializePassport() {
 
   passport.use(new JWTStrategy(opts, async (jwt_payload, done) => {
     try {
-      const user = await userModel.findById(jwt_payload.id);
-      if (user) {
-        return done(null, user);
+      const userDTO = await userService.getUserById(jwt_payload.id);
+      if (userDTO) {
+        return done(null, userDTO);
       } else {
         return done(null, false);
       }
@@ -89,19 +84,26 @@ export function initializePassport() {
     }
   }));
 
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
-
   passport.deserializeUser(async (id, done) => {
-    const user = await userModel.findById(id);
-
-    if (!user) return done(null, false);
-
-    return done(null, user);
+    try {
+      const userDTO = await userService.getUserById(id);
+      done(null, userDTO);
+    } catch (error) {
+      done(error);
+    }
   });
-}
+  
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const userDTO = await userService.getUserById(id);
+      done(null, userDTO);
+    } catch (error) {
+      done(error);
+    }
+  });
 
-function cookieExtractor(req) {
-  return req && req.signedCookies ? req.signedCookies.currentUser : null;
+
+  function cookieExtractor(req) {
+    return req && req.signedCookies ? req.signedCookies.currentUser : null;
+  }
 }

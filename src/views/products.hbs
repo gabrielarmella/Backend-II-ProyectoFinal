@@ -1,13 +1,15 @@
 <body>
   <header class="header">
     <div class="container">
-      <h1 class="logo">Coder Steam</h1>
+      <a href="/products" class="logo-link"><h1 class="logo">Coder Steam</h1></a>
       <nav class="nav">
         <ul>
-          <li><a href="/">Inicio</a></li>
+          <li><a href="/products">Inicio</a></li>
           <li><a href="/products">Productos</a></li>
           <li><a href="/about">Acerca de</a></li>
           <li><a href="/contact">Contacto</a></li>
+          <li><a href="/profile"><i class="fas fa-user"></i> </a></li>
+          <li><a href="/cart"><i class="fas fa-shopping-cart"></i> </a></li>
         </ul>
       </nav>
     </div>
@@ -18,12 +20,14 @@
       <div class="products-box">
         {{#each products}}
           <div class="product-card">
-            <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}" class="product-image">
-            <h3>{{this.title}}</h3>
-            <p>Descripción: {{this.description}}</p>
-            <p>Precio: ${{this.price}}</p>
-            <p>Categoría: {{this.category}}</p>
-            <p>Stock: {{this.stock}}</p>
+            <a href="/products/{{this.id}}" class="product-card-link">
+              <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}" class="product-image">
+              <h3>{{this.title}}</h3>
+              <p>Precio: ${{this.price}}</p>
+              <p>Categoría: {{this.category}}</p>
+              <p>Stock: {{this.stock}}</p>
+            </a>
+            <button class="btn-cart" onclick="addToCart('{{this._id}}')"></button>
             <button class="btn-buy">Comprar</button>
           </div>
         {{/each}}

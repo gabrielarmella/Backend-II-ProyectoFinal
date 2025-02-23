@@ -1,0 +1,54 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    
+    <header class="header">
+        <div class="container">
+        <a href="/products" class="logo-link"><h1 class="logo">Coder Steam</h1></a>
+        <nav class="nav">
+            <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/products">Productos</a></li>
+            <li><a href="/about">Acerca de</a></li>
+            <li><a href="/contact">Contacto</a></li>
+            <li><a href="/profile"><i class="fas fa-user"></i> </a></li>
+            <li><a href="/cart"><i class="fas fa-shopping-cart"></i> </a></li>
+            </ul>
+        </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+      <div class="product-detail">
+        <div class="product-images">
+          <img src="{{product.thumbnails.[0]}}" alt="{{product.title}}" class="main-image" id="mainImage">
+          <div class="thumbnail-images">
+            {{#each product.thumbnails}}
+              <img src="{{this}}" alt="{{../product.title}}" class="thumbnail-image" onclick="changeMainImage('{{this}}')">
+            {{/each}}
+          </div>
+        </div>
+        <div class="product-info">
+          <h1>{{product.title}}</h1>
+          <p class="product-price">Precio: ${{product.price}}</p>
+          <p class="product-category">Categoría: {{product.category}}</p>
+          <p class="product-stock">Stock: {{product.stock}}</p>
+          <p class="product-description">{{product.description}}</p>
+          <button class="btn-cart" onclick="addToCart('{{product.id}}')">Agregar al carrito</button>
+          <button class="btn-buy">Comprar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Coder Steam. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
+</body>

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { hashPassword } from "../utils/password.utils.js";
+import { hashPassword } from "../../utils/password.utils.js";
 
 const userSchema = new Schema({
   first_name: {type: String, required: true},
@@ -11,7 +11,7 @@ const userSchema = new Schema({
     match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   },
   age: {type: Number, required: true},
-  password: {type: String,required: true},
+  password: {type: String, required: true},
   cart: { type: Schema.Types.ObjectId, ref: "Cart" },
   role: {
     type: String,

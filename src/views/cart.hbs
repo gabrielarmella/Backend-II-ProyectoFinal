@@ -1,16 +1,49 @@
-<div class="box">
-    <div class="view-products"><a id="button-products" class="button" href="/products">Volver</a></div>
-    <h1>Productos</h1>
-    <div class="products-box">
-        {{#each products}}
-            <div class="product-card">
-                <img src="{{this.product.image}}" alt="{{this.title}}">
-                <h3>{{this.product.title}}</h3>
-                <hr>
-                <p>Categoria: {{this.product.category}}</p>
-                <p>Precio: $ {{this.product.price}}</p>
-                <p>Cantidad: {{this.quantity}}</p>
-            </div>
-        {{/each}}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito de Compras</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo-link"><h1 class="logo">Coder Steam</h1></a>
+      <nav class="nav">
+        <ul>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/products">Productos</a></li>
+          <li><a href="/about">Acerca de</a></li>
+          <li><a href="/contact">Contacto</a></li>
+          <li><a href="/profile"><i class="fas fa-user"></i> </a></li>
+          <li><a href="/cart"><i class="fas fa-shopping-cart"></i> </a></li>
+        </ul>
+      </nav>
     </div>
-</div>
+  </header>
+  <main class="main-content">
+    <div class="container">
+      <h1>Carrito de Compras</h1>
+      <div class="products-box">
+        {{#each cart.products}}
+          <div class="product-card">
+            <img src="{{this.product.thumbnails.[0]}}" alt="{{this.product.title}}" class="product-image">
+            <h3>{{this.product.title}}</h3>
+            <p>Precio: ${{this.product.price}}</p>
+            <p>Cantidad: {{this.quantity}}</p>
+            <button class="btn-cart" onclick="removeFromCart('{{this.product._id}}')">Eliminar</button>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Coder Steam. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/index.js"></script>
+</body>
+</html>
