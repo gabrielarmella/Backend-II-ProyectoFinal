@@ -3,7 +3,6 @@ import { connect } from "mongoose";
 import { engine } from 'express-handlebars';
 import { Server } from 'socket.io';
 import { CONFIG } from "./config/config.js";
-import { SERVICES } from "./common/enums/services.js"
 import morgan from 'morgan';
 import __dirname from './utils/constantsUtil.js';
 import websocket from './websocket.js'; 
@@ -12,6 +11,7 @@ import passport from 'passport';
 import { initializePassport } from './config/passport.config.js';
 import router from './routes/index.routes.js';
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
+import { SERVICES } from "./common/enums/services.js";
 
 const app = express();
 
@@ -26,11 +26,15 @@ app.use(express.static(__dirname + '/../../public'));
 
 
 
-if(CONFIG.PERSISTANCE === SERVICES.MONGODB){
+if (CONFIG.PERSISTENCE === SERVICES.MONGODB) {
   connect(CONFIG.MONGODB_URL)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.log(error));
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((error) => {
+      console.error('Error connecting to MongoDB:', error.message);
+      process.exit(1); 
+    });
 }
+
 app.engine('hbs', engine({extname: 'hbs',   
   runtimeOptions: {
   allowProtoPropertiesByDefault: true,

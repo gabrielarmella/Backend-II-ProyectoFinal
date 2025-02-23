@@ -16,16 +16,16 @@ export class UserService {
     return user;
   }
 
-  async create({ name, email, password }) {
-    const hash = await bcrypt.hash(password, 10);
-    const user = await this.userRepository.create({ name, email, password: hash });
+  async create({ first_name, last_name, email, password, age, role }) {
+    const hash = await bcrypt.hash(password, 4);
+    const user = await this.userRepository.create({ first_name, last_name, email, password:hash, age, role });
     return user;
   }
-
-  async getByEmail(email) {
+  async getUserByEmail(email) {
     const user = await this.userRepository.findByEmail(email);
     return user;
   }
+  
 
   async addProductsToUser({ id, products }) {
     const user = await this.userRepository.addProductsToUser(id, products);

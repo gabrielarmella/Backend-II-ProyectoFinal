@@ -16,7 +16,7 @@ router.post(
     body("first_name").notEmpty().withMessage("First name is required"),
     body("last_name").notEmpty().withMessage("Last name is required"),
     body("email").isEmail().withMessage("Email is invalid"),
-    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+    body("password").isLength({ min: 4 }).withMessage("Password must be at least 4 characters long"),
     validate,
   ],
   userController.createUser
@@ -27,5 +27,8 @@ router.get("/:id", userController.getUserById);
 
 // Ruta para obtener los datos del usuario actual
 router.get("/current", authenticate, userController.getCurrentUser);
+
+// Ruta para eliminar un usuario por ID
+router.delete("/:id", authenticate, userController.deleteUser);
 
 export { router as userRouter };

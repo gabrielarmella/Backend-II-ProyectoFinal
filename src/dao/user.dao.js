@@ -12,4 +12,20 @@ export class UserDAO {
   async create(user) {
     return await userModel.create(user);
   }
+
+  async updateUser(id, userUpdate) {
+    return await userModel.findByIdAndUpdate(id, userUpdate, { new: true });
+  }
+
+  async deleteUser(id) {
+    return await userModel.findByIdAndDelete(id);
+  }
+
+  async addProductsToUser(userId, products) {
+    const user = await userModel.findById(userId);
+    if (!user) throw new Error('User not found');
+    user.products.push(...products);
+    await user.save();
+    return user;
+  }
 }

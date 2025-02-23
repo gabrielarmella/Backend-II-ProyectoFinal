@@ -56,7 +56,7 @@ class productDBManager {
     }
 
     async updateProduct(pid, productUpdate) {
-        const updatedProduct = await productModel.findByIdAndUpadte(pid, productUpdate, {new: true});
+        const updatedProduct = await productModel.findByIdAndUpdate(pid, productUpdate, {new: true});
         return new ProductDTO(updatedProduct);
     }
 

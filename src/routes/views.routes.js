@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import passport from 'passport';
-import jwt from 'jsonwebtoken';
-import { productService, cartService, userService } from '../services/index.service.js';
-import { CONFIG } from '../config/config.js';
+import { Router } from "express";
+import passport from "passport";
+import jwt from "jsonwebtoken";
+import { productService, cartService } from "../services/index.service.js";
+import { CONFIG } from "../config/config.js";
 
-const viewsRouter = Router();
+const router = Router();
 
 
 function isAuthenticated(req, res, next) {
@@ -21,7 +21,7 @@ function isNotAuthenticated(req, res, next) {
   res.redirect("/register");
 }
 
-viewsRouter.get("/", (req, res) => {
+router.get("/", (req, res) => {
   const isSession = req.session && req.session.user ? true : false;
   res.render("index", {
     title: "Inicio",
@@ -30,7 +30,7 @@ viewsRouter.get("/", (req, res) => {
   });
 });
 
-viewsRouter.get("/login", isNotAuthenticated, (req, res) => {
+router.get("/login", isNotAuthenticated, (req, res) => {
   const isSession = req.session && req.session.user ? true : false;
 
   if (isSession) {
@@ -40,7 +40,7 @@ viewsRouter.get("/login", isNotAuthenticated, (req, res) => {
   res.render("login", { title: "Login" });
 });
 
-viewsRouter.get("/register", isNotAuthenticated, (req, res) => {
+router.get("/register", isNotAuthenticated, (req, res) => {
   const isSession = req.session && req.session.user ? true : false;
 
   if (isSession) {
@@ -50,16 +50,16 @@ viewsRouter.get("/register", isNotAuthenticated, (req, res) => {
   res.render("register", { title: "Register" });
 });
 
-viewsRouter.get('/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
   res.render('profile', { title: 'Profile', user: req.user });
 });
 
-viewsRouter.get('/products', async (req, res) => {
+router.get('/products', async (req, res) => {
   try {
-    const products = await ProductService.getAllProducts(req.query);
+    const products = await productService.getAllProducts(req.query);
     res.render(
       'products',
       {
@@ -71,8 +71,8 @@ viewsRouter.get('/products', async (req, res) => {
   }
 });
 
-viewsRouter.get('/realtimeproducts', async (req, res) => {
-  const products = await ProductService.getAllProducts(req.query);
+router.get('/realtimeproducts', async (req, res) => {
+  const products = await productService.getAllProducts(req.query);
   res.render(
     'realTimeProducts',
     {
@@ -83,8 +83,8 @@ viewsRouter.get('/realtimeproducts', async (req, res) => {
   )
 });
 
-viewsRouter.get('/cart/:cid', async (req, res) => {
-  const response = await CartService.getProductsFromCartByID(req.params.cid);
+router.get('/cart/:cid', async (req, res) => {
+  const response = await cartService.getProductsFromCartByID(req.params.cid);
 
   if (response.status === 'error') {
     return res.render(
@@ -106,11 +106,11 @@ viewsRouter.get('/cart/:cid', async (req, res) => {
   )
 });
 
-viewsRouter.get("/create-product", (req, res) => {
+router.get("/create-product", (req, res) => {
   res.render("createProduct", { title: "Crear Producto" });
 });
 
-viewsRouter.get("/current", isAuthenticated, async (req, res) => {
+router.get("/current", isAuthenticated, async (req, res) => {
   try {
     const token = req.signedCookies.currentUser;
     const decoded = jwt.verify(token, CONFIG.JWT.SECRET);
@@ -121,4 +121,4 @@ viewsRouter.get("/current", isAuthenticated, async (req, res) => {
   }
 });
 
-export default viewsRouter;
+export { router as viewsRouter };

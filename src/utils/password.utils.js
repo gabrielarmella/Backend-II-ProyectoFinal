@@ -7,6 +7,9 @@ export const hashPassword = async (password) => {
 };
 
 export const comparePassword = async (password, hashedPassword) => {
+  if (!password || !hashedPassword) {
+    throw new Error("data and hash arguments required");
+  }
   const isMatch = await bcrypt.compare(password, hashedPassword);
   return isMatch;
 };

@@ -1,6 +1,6 @@
-import { config } from "dotenv";
+import dotenv from "dotenv";
 
-config();
+dotenv.config();
 
 export const CONFIG = {
     PORT: process.env.PORT,
@@ -20,7 +20,9 @@ export const CONFIG = {
         TOKEN: process.env.TWILIO_AUTH_TOKEN,
         PHONE: process.env.TWILIO_SMS_NUMBER,
     },
-    PERSISTANCE: process.env.PERSISTANCE,
+    PERSISTENCE: process.env.PERSISTENCE,
     CLIENT_ORIGIN: process.env.CLIENT_ORIGIN,
     COOKIE_SECRET: process.env.COOKIE_SECRET,
+    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
 };

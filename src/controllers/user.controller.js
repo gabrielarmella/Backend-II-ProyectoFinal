@@ -36,6 +36,18 @@ class UserController {
       res.status(400).json({ status: "error", message: error.message });
     }
   }
+  async deleteUser(req, res) {
+    try {
+      const { id } = req.params;
+      const result = await userService.deleteUser(id);
+      if (!result) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      res.status(200).json({ message: 'Usuario eliminado correctamente' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al eliminar el usuario', error });
+    }
+  }
 }
 
 export const userController = new UserController();

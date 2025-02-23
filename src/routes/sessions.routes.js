@@ -1,9 +1,9 @@
 import { Router } from "express";
 import passport from "passport";
 
-export const sessionsRoutes = Router();
+const router = Router();
 
-sessionsRoutes.post(
+router.post(
   "/login",
   passport.authenticate("login", {
     failureRedirect: "/api/sessions/fail-login",
@@ -25,13 +25,13 @@ sessionsRoutes.post(
   }
 );
 
-sessionsRoutes.get("/fail-login", (req, res) => {
+router.get("/fail-login", (req, res) => {
   return res.status(500).json({
     message: "Internal server error",
   });
 });
 
-sessionsRoutes.post(
+router.post(
   "/register",
   passport.authenticate("register", {
     failureRedirect: "/api/sessions/fail-register",
@@ -46,17 +46,17 @@ sessionsRoutes.post(
   }
 );
 
-sessionsRoutes.get("/fail-register", (req, res) => {
+router.get("/fail-register", (req, res) => {
   return res.status(500).json({ message: "Internal server error" });
 });
 
-sessionsRoutes.get("/logout", (req, res) => {
+router.get("/logout", (req, res) => {
   req.session.destroy();
   return res.status(200).json({ message: "User logged out" });
 });
 
 
-sessionsRoutes.get(
+router.get(
   "/current",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
@@ -64,5 +64,4 @@ sessionsRoutes.get(
   }
 );
 
-
-export default sessionsRoutes;
+export { router as sessionsRouter };

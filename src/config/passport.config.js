@@ -1,8 +1,10 @@
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GitHubStrategy } from "passport-github2";
 import { createToken, SECRET } from "../utils/jwt.utils.js";
 import {userService} from '../services/index.service.js';
+import {userModel} from '../models/mongodb/user.model.js';
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
 import {CONFIG} from '../config/config.js';
 
@@ -39,7 +41,6 @@ export function initializePassport() {
       }
     )
   );
-
   passport.use(
     "login",
     new LocalStrategy(
@@ -48,17 +49,48 @@ export function initializePassport() {
       },
       async (email, password, done) => {
         try {
-          const userDTO = await userService.getUserByEmail(email);
-          if (!userDTO) return done(null, false, { message: "Usuario no encontrado" });
-          const isValidPassword = await comparePassword(password, userDTO.password);
-          if (!isValidPassword)
-            return done(null, false, { message: "Contraseña incorrecta" });
+          const user = await userService.getUserByEmail(email);
+          if (!user) return done(null, false, { message: "Usuario no encontrado" });
+          if (!user.password) return done(null, false, { message: "Contraseña no encontrada" });
+          const isValidPassword = await comparePassword(password, user.password);
+          if (!isValidPassword) return done(null, false, { message: "Contraseña incorrecta" });
           const token = createToken({
-            id: userDTO.id,
-            email: userDTO.email,
-            role: userDTO.role,
+            id: user.id,
+            email: user.email,
+            role: user.role,
           });
-          return done(null, { user: userDTO, token });
+          return done(null, { user, token });
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: CONFIG.GITHUB_CLIENT_ID,
+        clientSecret: CONFIG.GITHUB_CLIENT_SECRET,
+        callbackURL: `${CONFIG.CLIENT_ORIGIN}/api/auth/github/callback`,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+          if (!email) {
+            return done(null, false, { message: "Correo electrónico requerido" });
+          }
+          let user = await userService.getUserByEmail(email);
+          if (!user) {
+            user = await userService.create({
+              first_name: profile.displayName || profile.username,
+              last_name: "",
+              email: profile.emails[0].value,
+              password: "",
+              role: "user",
+            });
+          }
+          return done(null, user);
         } catch (error) {
           return done(error);
         }
@@ -73,9 +105,9 @@ export function initializePassport() {
 
   passport.use(new JWTStrategy(opts, async (jwt_payload, done) => {
     try {
-      const userDTO = await userService.getUserById(jwt_payload.id);
-      if (userDTO) {
-        return done(null, userDTO);
+      const user = await userService.getUserById(jwt_payload.id);
+      if (user) {
+        return done(null, user);
       } else {
         return done(null, false);
       }
@@ -86,21 +118,13 @@ export function initializePassport() {
 
   passport.deserializeUser(async (id, done) => {
     try {
-      const userDTO = await userService.getUserById(id);
-      done(null, userDTO);
+      const user = await userService.getUserById(id);
+      done(null, user);
     } catch (error) {
       done(error);
     }
   });
-  
-  passport.deserializeUser(async (id, done) => {
-    try {
-      const userDTO = await userService.getUserById(id);
-      done(null, userDTO);
-    } catch (error) {
-      done(error);
-    }
-  });
+
 
 
   function cookieExtractor(req) {
