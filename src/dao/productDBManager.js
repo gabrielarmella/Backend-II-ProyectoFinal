@@ -1,4 +1,4 @@
-import { productModel } from '../models/mongodb/product.model.js';
+import { productModel } from './models/Produc.js';
 
 class productDBManager {
 

@@ -1,5 +1,5 @@
 import { ProductDAO } from '../dao/product.dao.js';
-import { ProductDTO } from '../dto/product.dto.js';
+import { ProductDto } from '../dto/product.dto.js';
 
 export class ProductRepository {
   constructor() {
@@ -8,22 +8,32 @@ export class ProductRepository {
 
   async findById(id) {
     const product = await this.productDAO.findById(id);
-    return new ProductDTO(product);
+    return product;
   }
 
   async findAll(query) {
     const products = await this.productDAO.findAll(query);
-    return products.map(product => new ProductDTO(product));
+    return products;
   }
 
   async create(product) {
+    const { error } = ProductDto.validate(product);
+    if (error) {
+      throw new Error(`Validation error: ${error.details[0].message}`);
+    }
+
     const newProduct = await this.productDAO.create(product);
-    return new ProductDTO(newProduct);
+    return newProduct;
   }
 
   async update(id, productUpdate) {
+    const { error } = ProductDto.validate(productUpdate);
+    if (error) {
+      throw new Error(`Validation error: ${error.details[0].message}`);
+    }
+
     const updatedProduct = await this.productDAO.update(id, productUpdate);
-    return new ProductDTO(updatedProduct);
+    return updatedProduct;
   }
 
   async delete(id) {

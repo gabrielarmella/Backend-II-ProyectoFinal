@@ -1,43 +1,36 @@
 import { CartDAO } from '../dao/cart.dao.js';
-import { CartDTO } from '../dto/cart.dto.js';
+import { CartDto } from '../dto/cart.dto.js';
 
 export class CartRepository {
   constructor() {
     this.cartDAO = new CartDAO();
   }
-
   async findById(id) {
     const cart = await this.cartDAO.findById(id);
-    return new CartDTO(cart);
+    return cart;
   }
-
   async findAll() {
     const carts = await this.cartDAO.findAll();
-    return carts.map(cart => new CartDTO(cart));
+    return carts;
   }
-
   async create() {
     const newCart = await this.cartDAO.create();
-    return new CartDTO(newCart);
+    return newCart;
   }
-
   async addProduct(cartId, productId) {
     const updatedCart = await this.cartDAO.addProduct(cartId, productId);
-    return new CartDTO(updatedCart);
+    return updatedCart;
   }
-
-  async removeProduct(cartId, productId) {
-    const updatedCart = await this.cartDAO.removeProduct(cartId, productId);
-    return new CartDTO(updatedCart);
-  }
-
   async updateProductQuantity(cartId, productId, quantity) {
     const updatedCart = await this.cartDAO.updateProductQuantity(cartId, productId, quantity);
     return new CartDTO(updatedCart);
   }
-
   async clear(cartId) {
     const updatedCart = await this.cartDAO.clear(cartId);
-    return new CartDTO(updatedCart);
+    return updatedCart;
+  }
+  async removeProduct(cartId, productId) {
+    const updatedCart = await this.cartDAO.removeProduct(cartId, productId);
+    return updatedCart;
   }
 }

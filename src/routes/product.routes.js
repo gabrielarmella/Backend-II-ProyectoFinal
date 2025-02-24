@@ -1,13 +1,14 @@
-import { Router } from "express";
-import { uploader } from "../utils/multer.utils.js";
-import { authenticate } from "../middlewares/auth.middleware.js";
-import { authorizeRole } from "../middlewares/autor.middleware.js";
-import { productController } from "../controllers/product.controller.js";
+import { productController } from '../controllers/product.controllers.js';
+import { Router } from 'express'; 
+import { uploader } from '../utils/multer.utils.js';
 
 const router = Router();
 
-router.get("/", productController.getAllProducts);
-
-router.post("/", authenticate, authorizeRole("admin"), uploader.array("thumbnails", 5), productController.createProduct);
+// Rutas con el controller
+router.get('/', productController.getAllProducts);
+router.get('/:pid', productController.getProductById);
+router.post('/', uploader.array('thumbnails', 5), productController.createProduct);
+router.put('/:pid', uploader.array('thumbnails', 5), productController.updateProduct);  
+router.delete('/:pid', productController.deleteProduct);
 
 export { router as productRouter };

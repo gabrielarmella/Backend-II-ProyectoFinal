@@ -3,9 +3,8 @@ import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { createToken, SECRET } from "../utils/jwt.utils.js";
-import {userService} from '../services/index.service.js';
-import {userModel} from '../models/mongodb/user.model.js';
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
+import {userService} from '../services/index.service.js';
 import {CONFIG} from '../config/config.js';
 
 export function initializePassport() {
@@ -18,19 +17,18 @@ export function initializePassport() {
       },
       async (req, email, password, done) => {
         try {
-          const { first_name, last_name, age, role } = req.body;
+          const { firstName, lastName, age, role } = req.body;
 
-          if (!first_name || !last_name || !age) {
-            return done(null, false, { message: "Campos incompletos" });
+          if (!firstName || !lastName || !age) {
+            return done(null, false, { message: "Missing fields" });
           }
-          const hashedPassword = await hashPassword(password);
 
-          const user = await userModel.create({
-            first_name,
-            last_name,
+          const user = await userServices.registerUser({
+            first_name: firstName,
+            last_name: lastName,
             email,
             age,
-            password: hashedPassword,
+            password,
             role,
           });
 
@@ -46,20 +44,28 @@ export function initializePassport() {
     new LocalStrategy(
       {
         usernameField: "email",
+        passReqToCallback: true,
       },
-      async (email, password, done) => {
+      async (req, email, password, done) => {
         try {
-          const user = await userService.getUserByEmail(email);
-          if (!user) return done(null, false, { message: "Usuario no encontrado" });
-          if (!user.password) return done(null, false, { message: "Contraseña no encontrada" });
+          const user = await userService.getUserByEmail({ email });
+
+          if (!user) return done(null, false, { message: "User not found" });
+
           const isValidPassword = await comparePassword(password, user.password);
-          if (!isValidPassword) return done(null, false, { message: "Contraseña incorrecta" });
+
+          if (!isValidPassword)
+            return done(null, false, { message: "Invalid password" });
+
           const token = createToken({
             id: user.id,
             email: user.email,
             role: user.role,
           });
-          return done(null, { user, token });
+
+          req.token = token;
+
+          return done(null, user);
         } catch (error) {
           return done(error);
         }
@@ -82,7 +88,7 @@ export function initializePassport() {
           }
           let user = await userService.getUserByEmail(email);
           if (!user) {
-            user = await userService.create({
+            user = await userService.registerUser({
               first_name: profile.displayName || profile.username,
               last_name: "",
               email: profile.emails[0].value,
@@ -102,32 +108,40 @@ export function initializePassport() {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: SECRET,
   };
+  passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        secretOrKey: SECRET,
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+      },
+      async (payload, done) => {
+        try {
+          const user = await userService.getUserById(payload.id);
 
-  passport.use(new JWTStrategy(opts, async (jwt_payload, done) => {
-    try {
-      const user = await userService.getUserById(jwt_payload.id);
-      if (user) {
-        return done(null, user);
-      } else {
-        return done(null, false);
+          if (!user) return done(null, false);
+
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
       }
-    } catch (error) {
-      return done(error, false);
-    }
-  }));
+    )
+  );
 
-  passport.deserializeUser(async (id, done) => {
-    try {
-      const user = await userService.getUserById(id);
-      done(null, user);
-    } catch (error) {
-      done(error);
-    }
+  passport.serializeUser((user, done) => {
+    done(null, user.id);
   });
 
+  passport.deserializeUser(async (id, done) => {
+    const user = await userService.getUserById(id);
 
+    if (!user) return done(null, false);
 
-  function cookieExtractor(req) {
-    return req && req.signedCookies ? req.signedCookies.currentUser : null;
-  }
+    return done(null, user);
+  });
+}
+
+function cookieExtractor(req) {
+  return req && req.cookies ? req.cookies.token : null;
 }

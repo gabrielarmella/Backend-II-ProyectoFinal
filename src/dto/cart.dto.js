@@ -1,9 +1,10 @@
-export class CartDTO {
-    constructor(cart) {
-        this.id = cart._id;
-        this.products = cart.products.map(product => ({
-            product: product.product,
-            quantity: product.quantity
-        }));
-    }
-}
+import Joi from "joi";
+
+export const CartDto = Joi.object({
+  products: Joi.array().items(
+    Joi.object({
+      product: Joi.string().required(),
+      quantity: Joi.number().integer().min(1).required()
+    })
+  ).required()
+});

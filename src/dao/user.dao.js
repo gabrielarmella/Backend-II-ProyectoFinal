@@ -1,31 +1,28 @@
-import { userModel } from "../models/mongodb/user.model.js";
+import {User} from "../models/User.js";
 
 export class UserDAO {
-  async findById(id) {
-    return await userModel.findById(id);
+  get = (params) => {
+    return User.find(params);
   }
 
-  async findByEmail(email) {
-    return await userModel.findOne({ email });
+  getById = (params) => {
+    return User.findById(params);
+  }
+  findByEmail = (email) => {
+    return User.findOne({ email });
+  }
+  create = (doc) => {
+    return User.create(doc);
+  }
+  save = (doc) => {
+    return User.create(doc);
   }
 
-  async create(user) {
-    return await userModel.create(user);
+  update = (id, doc) => {
+    return User.findByIdAndUpdate(id, { $set: doc }, { new: true });
   }
 
-  async updateUser(id, userUpdate) {
-    return await userModel.findByIdAndUpdate(id, userUpdate, { new: true });
-  }
-
-  async deleteUser(id) {
-    return await userModel.findByIdAndDelete(id);
-  }
-
-  async addProductsToUser(userId, products) {
-    const user = await userModel.findById(userId);
-    if (!user) throw new Error('User not found');
-    user.products.push(...products);
-    await user.save();
-    return user;
+  delete = (id) => {
+    return User.findByIdAndDelete(id);
   }
 }

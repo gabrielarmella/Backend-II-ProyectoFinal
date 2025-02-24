@@ -1,8 +1,15 @@
-export function websocket(io) {
-    io.on('connection', (socket) => {
-      console.log('a user connected');
-      socket.on('disconnect', () => {
-        console.log('user disconnected');
-      });
+import { Server } from "socket.io";
+
+const websocket = (server) => {
+  const io = new Server(server);
+
+  io.on("connection", (socket) => {
+    console.log("New client connected");
+
+    socket.on("disconnect", () => {
+      console.log("Client disconnected");
     });
-  }
+  });
+};
+
+export default websocket;

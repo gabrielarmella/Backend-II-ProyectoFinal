@@ -1,38 +1,40 @@
 import { UserDAO } from '../dao/user.dao.js';
-import { UserDTO } from '../dto/user.dto.js';
+import { UserDto } from '../dto/user.dto.js';
 
 export class UserRepository {
   constructor() {
-    this.userDAO = new UserDAO();
+    this.userDAO =  new UserDAO();
   }
 
-  async findById(id) {
-    const user = await this.userDAO.findById(id);
-    return new UserDTO(user);
+  async get(id) {
+    return await this.userDAO.getById(id);
   }
+
+  async getAll() {
+    return await this.userDAO.get({});
+  }
+
 
   async findByEmail(email) {
-    const user = await this.userDAO.findByEmail(email);
-    return new UserDTO(user);
+    if (typeof email !== 'string') {
+      throw new Error('El email tiene que ser un string');
+    }
+    return await this.userDAO.findByEmail(email);
   }
 
   async create(user) {
-    const newUser = await this.userDAO.create(user);
-    return new UserDTO(newUser);
+    return await this.userDAO.create(user);
   }
 
   async update(id, userUpdate) {
-    const updatedUser = await this.userDAO.updateUser(id, userUpdate);
-    return new UserDTO(updatedUser);
+    return await this.userDAO.findByIdAndUpdate(id, userUpdate);
   }
 
   async delete(id) {
-    await this.userDAO.deleteUser(id);
-    return { message: 'User deleted successfully' };
+    return await this.userDAO.delete(id);
   }
 
-  async addProductsToUser(userId, products) {
-    const user = await this.userDAO.addProductsToUser(userId, products);
-    return new UserDTO(user);
+  async addProductToUser(userId, products) {
+    return await thus.userDAO.update(userId, { $push: { products } });
   }
 }

@@ -1,6 +1,6 @@
-import { UserService as UserServiceMongo } from "./mongodb/userdb.service.js";
-import { CartService as CartServiceMongo } from "./mongodb/cartdb.service.js";
-import { ProductService as ProductServiceMongo } from "./mongodb/productdb.service.js";
+import { UserService as UserServiceMongo } from "./mongodb/user.service.js";
+import { CartService as CartServiceMongo } from "./mongodb/cart.service.js";
+import { ProductService as ProductServiceMongo } from "./mongodb/product.service.js";
 
 import { CONFIG } from "../config/config.js";
 

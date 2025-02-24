@@ -10,10 +10,10 @@ export const CONFIG = {
         EXPIRES_IN: process.env.JWT_EXPIRES_IN,
     },
     MAIL:{
-        USER: process.env.MAILER_USER,
-        PASSWORD: process.env.MAILER_PASSWORD,
-        HOST: process.env.MAILER_HOST,
-        PORT: process.env.MAILER_PORT,
+        USER: process.env.MAIL_USER,
+        PASSWORD: process.env.MAIL_PASSWORD,
+        HOST: process.env.MAIL_HOST,
+        PORT: process.env.MAIL_PORT,
     },
     SMS: {
         SID: process.env.TWILIO_SID,
@@ -22,6 +22,7 @@ export const CONFIG = {
     },
     PERSISTENCE: process.env.PERSISTENCE,
     CLIENT_ORIGIN: process.env.CLIENT_ORIGIN,
+    SESSION_SECRET: process.env.SESSION,
     COOKIE_SECRET: process.env.COOKIE_SECRET,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,

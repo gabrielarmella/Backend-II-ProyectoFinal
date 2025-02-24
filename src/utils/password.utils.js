@@ -1,15 +1,8 @@
 import bcrypt from "bcrypt";
 
-export const hashPassword = async (password) => {
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return hashedPassword;
-};
-
-export const comparePassword = async (password, hashedPassword) => {
-  if (!password || !hashedPassword) {
-    throw new Error("data and hash arguments required");
-  }
-  const isMatch = await bcrypt.compare(password, hashedPassword);
-  return isMatch;
-};
+export async function hashPassword(password) {
+  return await bcrypt.hash(password, bcrypt.genSaltSync(10));
+}
+export async function comparePassword(password, hashedpassword) {
+  return await bcrypt.compare(password, hashedpassword);
+}

@@ -1,60 +1,90 @@
-import { cartModel } from '../models/mongodb/cart.model.js';
+import { Cart } from '../models/Cart.js';
 
 export class CartDAO {
   async findById(id) {
-    return await cartModel.findById(id).populate('products.product');
+  return await Cart.findById(id).populate('products.product');
   }
 
   async findAll() {
-    return await cartModel.find().populate('products.product');
+    try {
+      return await Cart.find().populate('products.product');
+    } catch (error) {
+      console.error('Error al buscar todos los carritos:', error);
+      throw error;
+    }
   }
 
   async create() {
-    return await cartModel.create({ products: [] });
+    try {
+      return await Cart.create({ products: [] });
+    } catch (error) {
+      console.error('Error al crear un nuevo carrito:', error);
+      throw error;
+    }
   }
 
   async addProduct(cartId, productId) {
-    const cart = await cartModel.findById(cartId);
-    if (!cart) throw new Error(`El carrito ${cartId} no existe!`);
+    try {
+      const cart = await Cart.findById(cartId);
+      if (!cart) throw new Error(`El carrito ${cartId} no existe`);
 
-    const productIndex = cart.products.findIndex(p => p.product.toString() === productId);
-    if (productIndex !== -1) {
-      cart.products[productIndex].quantity += 1;
-    } else {
-      cart.products.push({ product: productId, quantity: 1 });
+      const productIndex = cart.products.findIndex(p => p.product.toString() === productId);
+      if (productIndex !== -1) {
+        cart.products[productIndex].quantity += 1;
+      } else {
+        cart.products.push({ product: productId, quantity: 1 });
+      }
+
+      await cart.save();
+      return cart;
+    } catch (error) {
+      console.error(`Error al añadir el producto ${productId} al carrito ${cartId}:`, error);
+      throw error;
     }
-
-    await cart.save();
-    return cart;
   }
 
   async removeProduct(cartId, productId) {
-    const cart = await cartModel.findById(cartId);
-    if (!cart) throw new Error(`El carrito ${cartId} no existe!`);
+    try {
+      const cart = await cartModel.findById(cartId);
+      if (!cart) throw new Error(`El carrito ${cartId} no existe`);
 
-    cart.products = cart.products.filter(p => p.product.toString() !== productId);
-    await cart.save();
-    return cart;
+      cart.products = cart.products.filter(p => p.product.toString() !== productId);
+      await cart.save();
+      return cart;
+    } catch (error) {
+      console.error(`Error al eliminar el producto ${productId} del carrito ${cartId}:`, error);
+      throw error;
+    }
   }
 
   async updateProductQuantity(cartId, productId, quantity) {
-    const cart = await cartModel.findById(cartId);
-    if (!cart) throw new Error(`El carrito ${cartId} no existe!`);
+    try {
+      const cart = await Cart.findById(cartId);
+      if (!cart) throw new Error(`El carrito ${cartId} no existe`);
 
-    const productIndex = cart.products.findIndex(p => p.product.toString() === productId);
-    if (productIndex === -1) throw new Error(`El producto ${productId} no existe en el carrito ${cartId}!`);
+      const productIndex = cart.products.findIndex(p => p.product.toString() === productId);
+      if (productIndex === -1) throw new Error(`El producto ${productId} no existe en el carrito ${cartId}`);
 
-    cart.products[productIndex].quantity = quantity;
-    await cart.save();
-    return cart;
+      cart.products[productIndex].quantity = quantity;
+      await cart.save();
+      return cart;
+    } catch (error) {
+      console.error(`Error al actualizar la cantidad del producto ${productId} en el carrito ${cartId}:`, error);
+      throw error;
+    }
   }
 
   async clear(cartId) {
-    const cart = await cartModel.findById(cartId);
-    if (!cart) throw new Error(`El carrito ${cartId} no existe!`);
+    try {
+      const cart = await Cart.findById(cartId);
+      if (!cart) throw new Error(`El carrito ${cartId} no existe`);
 
-    cart.products = [];
-    await cart.save();
-    return cart;
+      cart.products = [];
+      await cart.save();
+      return cart;
+    } catch (error) {
+      console.error(`Error al vaciar el carrito ${cartId}:`, error);
+      throw error;
+    }
   }
 }
