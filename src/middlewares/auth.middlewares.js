@@ -33,8 +33,11 @@ export const checkAuth = (req, res, next) => {
             return next(new Error(JWT_TRANSLATIONS[info.message] ?? info.message));
         }
         req.id = user.id;
-        req.roles = user.roles;
+        req.name = user.name;
+        req.surname = user.surname;
+        req.age = user.age;
         req.email = user.email;
+        req.roles = user.roles;
 
         next();
     })(req, res, next);

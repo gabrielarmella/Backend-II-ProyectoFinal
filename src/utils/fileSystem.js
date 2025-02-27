@@ -2,13 +2,13 @@ import fs from 'fs'
 import path from 'path';
 
 
-// Valida que la ruta y el nombre del archivo sean proporcionados
+
 const validateFilePathAndName = (filepath, filename) => {
     if (!filepath) throw new Error("La ruta del archivo no fue proporcionada");
     if (!filename) throw new Error("El nombre del archivo no fue proporcionado");
 };
 
-// Lee el contenido de un archivo
+
 export const readFile = async (filepath, filename) => {
     validateFilePathAndName(filepath, filename);
     try {
@@ -19,7 +19,7 @@ export const readFile = async (filepath, filename) => {
     }
 };
 
-// Escribe contenido en un archivo
+
 export const writeFile = async (filepath, filename, content) => {
     validateFilePathAndName(filepath, filename);
 
@@ -31,7 +31,7 @@ export const writeFile = async (filepath, filename, content) => {
         throw new Error("Error al escribir el archivo");
     }
 };
-// Elimina un archivo
+
 export const deleteFile = async (filepath, filename) => {
     validateFilePathAndName(filepath, filename);
 

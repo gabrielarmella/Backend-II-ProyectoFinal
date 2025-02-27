@@ -1,9 +1,8 @@
 import path from 'path';
 
-// Obtiene la ruta del directorio raíz del proyecto
 const ROOT_PATH = path.resolve();
 
-// Obtiene la ruta del directorio raíz del proyecto
+
 const paths = {
     root: ROOT_PATH,
     env: {

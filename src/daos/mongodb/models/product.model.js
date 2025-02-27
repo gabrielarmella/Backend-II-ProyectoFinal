@@ -26,7 +26,7 @@ const productSchema = new Schema({
             validator: async function (code) {
                 const countDocuments = await this.model("products").countDocuments({
                     _id: { $ne: this._id },
-                    code, // Atributo de verificación de duplicado
+                    code, 
                 });
                 return countDocuments === 0;
             },
@@ -63,11 +63,11 @@ const productSchema = new Schema({
         trim: true,
     },
 }, {
-    timestamps: true, // Añade timestamps para generar createdAt y updatedAt
-    versionKey: false, // Elimina el campo __v de versión
+    timestamps: true, 
+    versionKey: false, 
 });
 
-// Middleware que elimina la referencia en los carritos al eliminar el producto.
+
 productSchema.pre("deleteOne", async function(next) {
     try {
         await model("carts").updateMany(
@@ -81,7 +81,7 @@ productSchema.pre("deleteOne", async function(next) {
     }
 });
 
-// Agrega mongoose-paginate-v2 para habilitar las funcionalidades de paginación.
+
 productSchema.plugin(paginate);
 
 const Product = model("products", productSchema);

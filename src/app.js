@@ -23,26 +23,23 @@ app.use(express.static(paths.public));
 configDotenv();
 connectDB();
 
-// Decodificadores del BODY
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Decodificadores de Cookies
 app.use(cookieParser(process.env.SECRET_KEY));
 
-// Declaración de ruta estática
 app.use("/public", express.static(paths.public));
 
-// Motor de plantillas
+
 configHandlebars(app);
 
-// Passport
+
 configPassport(app);
 
-// CORS
+
 configCORS(app);
 
-// Enrutadores
 app.use("/api/carts", new CartRouter().getRouter());
 app.use("/api/products", new ProductRouter().getRouter());
 app.use("/api/sessions", new SessionRouter().getRouter());
@@ -50,18 +47,18 @@ app.use("/api/users", new UserRouter().getRouter());
 app.use("/api/tickets", new TicketRouter().getRouter());
 app.use("/", new HomeViewRouter().getRouter());
 
-// Control de rutas inexistentes
+
 app.use("*", (req, res) => {
     res.status(404).send("<h1>Error 404</h1><h3>La URL indicada no existe en este servidor</h3>");
 });
 
-// Control de errores internos
+
 app.use((error, req, res) => {
     console.log("Error:", error.message);
     res.status(500).send("<h1>Error 500</h1><h3>Se ha generado un error en el servidor</h3>");
 });
 
-// Método oyente de solicitudes
+
 app.listen(process.env.PORT, () => {
     console.log(`Ejecutándose en http://localhost:${process.env.PORT}`);
 });

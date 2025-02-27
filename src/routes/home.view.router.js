@@ -13,6 +13,7 @@ export default class HomeViewRouter extends BaseRouter {
         this.addGetRoute("/", [], (req, res) => this.#getTemplateHome(req, res));
         this.addGetRoute("/login", [], (req, res) => this.#getTemplateLogin(req, res));
         this.addGetRoute("/register", [], (req, res) => this.#getTemplateRegister(req, res));
+        this.addGetRoute("current", [], (req, res) => this.#getTemplateHome(req, res));
 
 
         router.use((error, req, res, next) => {

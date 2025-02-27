@@ -1,6 +1,6 @@
 import BaseRouter from "../base.router.js";
 import SessionController from "../../controllers/session.controller.js";
-import { generateToken } from "../../middlewares/auth.middlewares.js";
+import { generateToken, checkAuth } from "../../middlewares/auth.middlewares.js";
 import { USER } from "../../constants/roles.constant.js";
 
 export default class SessionRouter extends BaseRouter {

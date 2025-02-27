@@ -1,5 +1,4 @@
 export default class SessionController {
-  // Generar un token
   login(req, res) {
       try {
         let token = null;
@@ -9,24 +8,27 @@ export default class SessionController {
             token = req.cookies["token"];
         }
 
-        res.sendSuccess201(token);
+        res.redirect("/current");
     } catch (error) {
         res.sendError(error);
     }
   }
 
-  // Obtener el usuario que actualmente ha iniciado sesión
   getCurrentUser(req, res) {
-      try {
-          const user = {
-              id: req.id,
-              roles: req.roles,
-              email: req.email,
-          };
+    try{
 
-          res.sendSuccess200(user);
-      } catch (error) {
-          res.sendError(error);
-      }
+        const user = {
+            id: req.id,
+            name: req.name,
+            surname: req.surname,
+            email: req.email,
+            age: req.age,
+            role: req.role,
+        };
+        res.render("current", {user});
+    }catch(error){
+        res.sendError(error);
+    }
+
   }
 }
