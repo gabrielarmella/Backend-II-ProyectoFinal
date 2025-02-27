@@ -1,36 +1,44 @@
-import { CartDAO } from '../dao/cart.dao.js';
-import { CartDto } from '../dto/cart.dto.js';
+import FactoryDAO from "../daos/factory.dao.js";
+import CartDTO from "../dtos/cart.dto.js";
+import { MONGODB } from "../constants/dao.constant.js";
+import { ERROR_NOT_FOUND_ID } from "../constants/messages.constant.js";
 
-export class CartRepository {
-  constructor() {
-    this.cartDAO = new CartDAO();
-  }
-  async findById(id) {
-    const cart = await this.cartDAO.findById(id);
-    return cart;
-  }
-  async findAll() {
-    const carts = await this.cartDAO.findAll();
-    return carts;
-  }
-  async create() {
-    const newCart = await this.cartDAO.create();
-    return newCart;
-  }
-  async addProduct(cartId, productId) {
-    const updatedCart = await this.cartDAO.addProduct(cartId, productId);
-    return updatedCart;
-  }
-  async updateProductQuantity(cartId, productId, quantity) {
-    const updatedCart = await this.cartDAO.updateProductQuantity(cartId, productId, quantity);
-    return new CartDTO(updatedCart);
-  }
-  async clear(cartId) {
-    const updatedCart = await this.cartDAO.clear(cartId);
-    return updatedCart;
-  }
-  async removeProduct(cartId, productId) {
-    const updatedCart = await this.cartDAO.removeProduct(cartId, productId);
-    return updatedCart;
-  }
+export default class CartRepository {
+    #cartDAO;
+    #cartDTO;
+
+    constructor() {
+        const factory = new FactoryDAO(); 
+        this.#cartDAO = factory.createCart(MONGODB);
+        this.#cartDTO = new CartDTO();
+    }
+
+    async findAll(params) {
+        params.populate = "products.product";
+
+        const carts = await this.#cartDAO.findAll({}, params);
+        const cartsDTO = carts?.docs?.map((cart) => this.#cartDTO.fromModel(cart));
+        carts.docs = cartsDTO;
+
+        return carts;
+    }
+
+    async findOneById(id) {
+        const cart = await this.#cartDAO.findOneById(id);
+        if (!cart) throw new Error(ERROR_NOT_FOUND_ID);
+
+        return this.#cartDTO.fromModel(cart);
+    }
+
+    async save(data) {
+        const cartDTO = this.#cartDTO.fromData(data);
+        const cart = await this.#cartDAO.save(cartDTO);
+        return this.#cartDTO.fromModel(cart);
+    }
+
+    async deleteOneById(id) {
+        const cart = await this.findOneById(id);
+        await this.#cartDAO.deleteOneById(id);
+        return cart;
+    }
 }

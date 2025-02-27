@@ -3,8 +3,7 @@ import { CONFIG } from '../config/config.js';
 
 class MailService {
   constructor() {
-    console.log(CONFIG.MAIL);
-
+    
     this.transporter = nodemailer.createTransport({
       host: CONFIG.MAIL.HOST,
       port: CONFIG.MAIL.PORT,

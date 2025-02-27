@@ -1,40 +1,55 @@
-import { UserDAO } from '../dao/user.dao.js';
-import { UserDto } from '../dto/user.dto.js';
+import FactoryDAO from "../daos/factory.dao.js";
+import UserDTO from "../dtos/user.dto.js";
+import { MONGODB } from "../constants/dao.constant.js";
+import { ERROR_NOT_FOUND_CREDENTIALS, ERROR_NOT_FOUND_ID } from "../constants/messages.constant.js";
+import { isValidPassword } from "../utils/security.js";
 
-export class UserRepository {
-  constructor() {
-    this.userDAO =  new UserDAO();
-  }
+export default class UserRepository {
+    #userDAO;
+    #userDTO;
 
-  async get(id) {
-    return await this.userDAO.getById(id);
-  }
-
-  async getAll() {
-    return await this.userDAO.get({});
-  }
-
-
-  async findByEmail(email) {
-    if (typeof email !== 'string') {
-      throw new Error('El email tiene que ser un string');
+    constructor() {
+        const factory = new FactoryDAO(); 
+        this.#userDAO = factory.createUser(MONGODB);
+        this.#userDTO = new UserDTO();
     }
-    return await this.userDAO.findByEmail(email);
-  }
+    async findAll(params) {
+        const users = await this.#userDAO.findAll({}, params);
+        const usersDTO = users?.docs?.map((user) => this.#userDTO.fromModel(user));
+        users.docs = usersDTO;
 
-  async create(user) {
-    return await this.userDAO.create(user);
-  }
+        return users;
+    }
 
-  async update(id, userUpdate) {
-    return await this.userDAO.findByIdAndUpdate(id, userUpdate);
-  }
+    async findOneById(id) {
+        const user = await this.#userDAO.findOneById(id);
+        if (!user) throw new Error(ERROR_NOT_FOUND_ID);
 
-  async delete(id) {
-    return await this.userDAO.delete(id);
-  }
+        return this.#userDTO.fromModel(user);
+    }
 
-  async addProductToUser(userId, products) {
-    return await thus.userDAO.update(userId, { $push: { products } });
-  }
+    async findOneByEmailAndPassword(email, password) {
+        const user = await this.#userDAO.findOneByCriteria({ email });
+        if (!user) {
+            throw new Error(ERROR_NOT_FOUND_CREDENTIALS);
+        }
+
+        const hash = user.password;
+        if (!isValidPassword(password, hash)) {
+            throw new Error(ERROR_NOT_FOUND_CREDENTIALS);
+        }
+
+        return this.#userDTO.fromModel(user);
+    }
+    async save(data) {
+        const userDTO = this.#userDTO.fromData(data);
+        const user = await this.#userDAO.save(userDTO);
+        return this.#userDTO.fromModel(user);
+    }
+
+    async deleteOneById(id) {
+        const user = await this.findOneById(id);
+        await this.#userDAO.deleteOneById(id);
+        return user;
+    }
 }

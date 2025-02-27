@@ -93,3 +93,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+document.getElementById('register-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+  
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+  
+      const result = await response.json();
+      if (result.status === 'error') {
+        document.getElementById('error-message').textContent = result.message;
+      } else if (result.status === 'success') {
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      document.getElementById('error-message').textContent = 'Error interno del servidor';
+    }
+  });

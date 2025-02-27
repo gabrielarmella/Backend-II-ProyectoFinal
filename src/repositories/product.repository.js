@@ -1,43 +1,48 @@
-import { ProductDAO } from '../dao/product.dao.js';
-import { ProductDto } from '../dto/product.dto.js';
+import FactoryDAO from "../daos/factory.dao.js";
+import ProductDTO from "../dtos/product.dto.js";
+import { MONGODB } from "../constants/dao.constant.js";
+import { ERROR_NOT_FOUND_ID } from "../constants/messages.constant.js";
 
-export class ProductRepository {
-  constructor() {
-    this.productDAO = new ProductDAO();
-  }
+export default class ProductRepository {
+    #productDAO;
+    #productDTO;
 
-  async findById(id) {
-    const product = await this.productDAO.findById(id);
-    return product;
-  }
+    constructor() {
+        const factory = new FactoryDAO(); 
+        this.#productDAO = factory.createProduct(MONGODB);
+        this.#productDTO = new ProductDTO();
+    }
+    async findAll(params) {
+        const $and = [];
 
-  async findAll(query) {
-    const products = await this.productDAO.findAll(query);
-    return products;
-  }
+        if (params?.title) $and.push({ title: { $regex: params.title, $options: "i" } });
+        const filters = $and.length > 0 ? { $and } : {};
 
-  async create(product) {
-    const { error } = ProductDto.validate(product);
-    if (error) {
-      throw new Error(`Validation error: ${error.details[0].message}`);
+        const products = await this.#productDAO.findAll(filters, params);
+        const productsDTO = products?.docs?.map((product) => this.#productDTO.fromModel(product));
+        products.docs = productsDTO;
+
+        return products;
     }
 
-    const newProduct = await this.productDAO.create(product);
-    return newProduct;
-  }
 
-  async update(id, productUpdate) {
-    const { error } = ProductDto.validate(productUpdate);
-    if (error) {
-      throw new Error(`Validation error: ${error.details[0].message}`);
+    async findOneById(id) {
+        const product = await this.#productDAO.findOneById(id);
+        if (!product) throw new Error(ERROR_NOT_FOUND_ID);
+
+        return this.#productDTO.fromModel(product);
     }
 
-    const updatedProduct = await this.productDAO.update(id, productUpdate);
-    return updatedProduct;
-  }
+    async save(data) {
+        const productDTO = this.#productDTO.fromData(data);
+        const product = await this.#productDAO.save(productDTO);
+        return this.#productDTO.fromModel(product);
+    }
 
-  async delete(id) {
-    await this.productDAO.delete(id);
-    return { message: 'Product deleted successfully' };
-  }
+
+    async deleteOneById(id) {
+        const product = await this.findOneById(id);
+        await this.#productDAO.deleteOneById(id);
+        return product;
+    }
 }

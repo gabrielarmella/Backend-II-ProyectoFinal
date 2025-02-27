@@ -1,21 +1,41 @@
+import jwt from "jsonwebtoken";
 import passport from "passport";
+import UserService from "../services/user.service.js";
+import { JWT_TRANSLATIONS } from "../constants/messages.constant.js";
 
-export const isAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ message: "Unauthorized" });
+const userService = new UserService();
+
+export const generateToken = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        const userFound = await userService.findOneByEmailAndPassword(email, password);
+
+        const token = jwt.sign({ id: userFound.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+        req.token = token;
+
+        res.cookie("token", token, { maxAge: 2 * 60 * 60 * 1000, httpOnly: true });
+
+        next();
+    } catch (error) {
+        next(error);
+    }
 };
 
-export const hasRole = (roles) => {
-    return (req, res, next) => {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const userRole = req.user.role;
-      if (roles.includes(userRole)) {
-        return next();
-      }
-      res.status(403).json({ message: "Forbidden" });
-    };
-  };
+export const checkAuth = (req, res, next) => {
+    const jwtStrategy = req.cookies["token"] ? "jwt-cookie" : "jwt-header";
+
+    passport.authenticate(jwtStrategy, { session: false }, (error, user, info) => {
+        if (error) return next(error);
+
+        if (!user) {
+            return next(new Error(JWT_TRANSLATIONS[info.message] ?? info.message));
+        }
+        req.id = user.id;
+        req.roles = user.roles;
+        req.email = user.email;
+
+        next();
+    })(req, res, next);
+};
