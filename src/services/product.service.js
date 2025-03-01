@@ -10,14 +10,17 @@ export default class ProductService {
         this.#productRepository = new ProductRepository();
     }
 
+    // Obtener productos aplicando filtros
     async findAll(params) {
         return await this.#productRepository.findAll(params);
     }
 
+    // Obtener un producto por su ID
     async findOneById(id) {
         return await this.#productRepository.findOneById(id);
     }
 
+    // Crear un producto
     async insertOne(data, filename) {
         return await this.#productRepository.save({
             ...data,
@@ -26,6 +29,7 @@ export default class ProductService {
         });
     }
 
+    // Actualizar un producto existente
     async updateOneById(id, data, filename) {
         const product = await this.findOneById(id);
         const currentThumbnail = product.thumbnail;
@@ -45,6 +49,7 @@ export default class ProductService {
         return productUpdated;
     }
 
+    // Eliminar un producto por su ID
     async deleteOneById(id) {
         const product = await this.findOneById(id);
 
