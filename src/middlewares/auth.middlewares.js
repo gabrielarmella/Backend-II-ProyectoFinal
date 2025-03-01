@@ -1,15 +1,15 @@
 import jwt from "jsonwebtoken";
 import passport from "passport";
-import UserService from "../services/user.service.js";
+import UserManager from "../managers/user.manager.js";
 import { JWT_TRANSLATIONS } from "../constants/messages.constant.js";
 
-const userService = new UserService();
+const userManager = new UserManager();
 
 export const generateToken = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        const userFound = await userService.findOneByEmailAndPassword(email, password);
+        const userFound = await userManager.getOneEmailAndPassword(email, password);
 
         const token = jwt.sign({ id: userFound.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
@@ -31,13 +31,11 @@ export const checkAuth = (req, res, next) => {
 
         if (!user) {
             return next(new Error(JWT_TRANSLATIONS[info.message] ?? info.message));
+            res.redirect("/");
         }
         req.id = user.id;
-        req.name = user.name;
-        req.surname = user.surname;
-        req.age = user.age;
-        req.email = user.email;
         req.roles = user.roles;
+        req.email = user.email;
 
         next();
     })(req, res, next);

@@ -27,7 +27,6 @@ export default class CartManager {
         if (!isValidID(id)) throw new Error(ERROR_INVALID_ID);
     };
 
-    // Busca una receta por su ID
     #findOneById = async (id) => {
         this.#validateId(id);
 

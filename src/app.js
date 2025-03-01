@@ -11,7 +11,6 @@ import SessionRouter from "./routes/api/session.router.js";
 import CartRouter from "./routes/api/cart.router.js";
 import ProductRouter from "./routes/api/product.router.js";
 import UserRouter from "./routes/api/user.router.js";
-import TicketRouter from "./routes/api/ticket.router.js";
 import HomeViewRouter from "./routes/home.view.router.js";
 
 const app = express();
@@ -42,9 +41,8 @@ configCORS(app);
 
 app.use("/api/carts", new CartRouter().getRouter());
 app.use("/api/products", new ProductRouter().getRouter());
-app.use("/api/sessions", new SessionRouter().getRouter());
+app.use("/api/session", new SessionRouter().getRouter());
 app.use("/api/users", new UserRouter().getRouter());
-app.use("/api/tickets", new TicketRouter().getRouter());
 app.use("/", new HomeViewRouter().getRouter());
 
 

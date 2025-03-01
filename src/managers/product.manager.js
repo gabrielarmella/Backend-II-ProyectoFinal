@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import paths from "../utils/paths.js";
-import Product from "../models/product.model.js";
+import Product from "../daos/mongodb/models/product.model.js";
 import { isValidID } from "../config/mongoose.config.js";
 import { deleteFile } from "../utils/fileSystem.js";
 import { convertToBoolean } from "../utils/converter.js";

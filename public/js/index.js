@@ -1,13 +1,7 @@
-const socket = io();
 
 function $(selector) {
     return document.querySelector(selector);
 }
-
-socket.on('statusError', data => {
-    console.log(data);
-    alert(data);
-});
 
 socket.on('publishProducts', data => {
     $('.products-box').innerHTML = '';
@@ -81,7 +75,6 @@ function removeFromCart(productId){
     })
     .catch(error => console.error('Error:', error));
 }
-
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
@@ -92,30 +85,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1000);
         });
     }
-});
 
-document.getElementById('register-form').addEventListener('submit', async function(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-  
-    try {
-      const response = await fetch(form.action, {
-        method: form.method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-  
-      const result = await response.json();
-      if (result.status === 'error') {
-        document.getElementById('error-message').textContent = result.message;
-      } else if (result.status === 'success') {
-        window.location.href = '/login';
-      }
-    } catch (error) {
-      document.getElementById('error-message').textContent = 'Error interno del servidor';
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+          
+            try {
+              const response = await fetch(form.action, {
+                method: form.method,
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+              });
+          
+              const result = await response.json();
+              if (result.status === 'error') {
+                document.getElementById('error-message').textContent = result.message;
+              } else if (result.status === 'success') {
+                window.location.href = '/login';
+              }
+            } catch (error) {
+              document.getElementById('error-message').textContent = 'Error interno del servidor';
+            }
+        });
     }
-  });
+});

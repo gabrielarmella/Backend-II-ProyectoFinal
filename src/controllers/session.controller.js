@@ -7,6 +7,10 @@ export default class SessionController {
         } else if (req.cookies && req.cookies["token"]) {
             token = req.cookies["token"];
         }
+        if (!token) {
+            throw new Error("No se proporcionó token de autenticación");
+        }
+        
 
         res.redirect("/current");
     } catch (error) {
@@ -25,7 +29,7 @@ export default class SessionController {
             age: req.age,
             role: req.role,
         };
-        res.render("current", {user});
+        res.render("/current", {user});
     }catch(error){
         res.sendError(error);
     }

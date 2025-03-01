@@ -72,26 +72,20 @@ export default class BaseRouter {
     }
 
     #addRoute(method, path, policies = [], ...callbacks) {
-
         this.#router[method](path, this.#checkPolicy(policies), ...callbacks);
     }
-
     addGetRoute(path, policies = [], ...callbacks) {
         this.#addRoute("get", path, policies, ...callbacks);
     }
-
     addPostRoute(path, policies = [], ...callbacks) {
         this.#addRoute("post", path, policies, ...callbacks);
     }
-
     addPutRoute(path, policies = [], ...callbacks) {
         this.#addRoute("put", path, policies, ...callbacks);
     }
-
     addDeleteRoute(path, policies = [], ...callbacks) {
         this.#addRoute("delete", path, policies, ...callbacks);
     }
-
     getRouter() {
         return this.#router;
     }
