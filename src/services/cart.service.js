@@ -13,34 +13,28 @@ export default class CartService {
         this.#ticketService = new TicketService();
     }
 
-    // Obtener carritos aplicando filtros
     async findAll(params) {
         return await this.#cartRepository.findAll(params);
     }
 
-    // Obtener un carrito por su ID
     async findOneById(id) {
         return await this.#cartRepository.findOneById(id);
     }
 
-    // Crear un carrito
     async insertOne(data) {
         return await this.#cartRepository.save(data);
     }
 
-    // Actualizar un carrito existente
     async updateOneById(id, data) {
         const cart = await this.findOneById(id);
         const newValues = { ...cart, ...data };
         return await this.#cartRepository.save(newValues);
     }
 
-    // Eliminar un carrito por su ID
     async deleteOneById(id) {
         return await this.#cartRepository.deleteOneById(id);
     }
 
-    // Agrega un producto a un carrito o incrementar la cantidad de un producto existente
     async addOneProduct(id, productId, quantity = 0) {
         const cartFound = await this.findOneById(id);
 
@@ -55,7 +49,7 @@ export default class CartService {
         return await this.#cartRepository.save(cartFound);
     }
 
-    // Elimina un producto de un carrito o decrementa la cantidad de un producto existente
+
     async removeOneProduct(id, productId, quantity = 0) {
         const cartFound = await this.findOneById(id);
 
@@ -73,7 +67,6 @@ export default class CartService {
         return await this.#cartRepository.save(cartFound);
     }
 
-    // Elimina todos los productos de un carrito por su ID
     async removeAllProducts(id) {
         const cartFound = await this.findOneById(id);
         cartFound.products = [];
@@ -81,7 +74,6 @@ export default class CartService {
         return await this.#cartRepository.save(cartFound);
     }
 
-    // Procesa la compra de un carrito específico
     async processPurchase(id, purchaser) {
         const cart = await this.findOneById(id);
         let amount = 0;
@@ -91,22 +83,19 @@ export default class CartService {
             const product = await this.#productService.findOneById(item.product);
 
             if (product.stock >= item.quantity) {
-                // Actualiza el stock del producto
+
                 product.stock -= item.quantity;
                 await this.#productService.updateOneById(product.id, product);
 
-                // Acumula el resultado de multiplicar el precio por la cantidad
+
                 amount += product.price * item.quantity;
 
-                // Quita el producto del carrito
                 await this.removeOneProduct(id, product.id, item.quantity);
             } else {
                 unprocessedProducts.push(item);
             }
         }
 
-        // Crea el ticket. Esta validación impide que se inserten ticket
-        // en donde no se procesaron productos por fal de stock.
         if (amount > 0) {
             this.#ticketService.insertOne({ amount, purchaser });
         }

@@ -10,9 +10,7 @@ export default class SessionController {
         if (!token) {
             throw new Error("No se proporcionó token de autenticación");
         }
-        
-
-        res.redirect("/current");
+        res.sendSuccess201({ token });
     } catch (error) {
         res.sendError(error);
     }
@@ -22,14 +20,11 @@ export default class SessionController {
     try{
 
         const user = {
-            id: req.id,
-            name: req.name,
-            surname: req.surname,
-            email: req.email,
-            age: req.age,
-            role: req.role,
+            id:req.id,
+            roles:req.roles,
+            email:req.email,
         };
-        res.render("/current", {user});
+        res.sendSuccess200(user);
     }catch(error){
         res.sendError(error);
     }
